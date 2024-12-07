@@ -1,18 +1,21 @@
-/*
-package com.gabbar.apicloudgateway;
+package com.gabbar.apicloudgateway.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Collection;
-import java.util.Map;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class AuthenticationResponse {
+
     private String userId;
-    private Collection<String> authorities;
-    private Map<String, Object> claims;
-}*/
+    private String accessToken;
+    private String refreshToken;
+    private long expiresAt;
+    private Collection<String> authorityList;
+}

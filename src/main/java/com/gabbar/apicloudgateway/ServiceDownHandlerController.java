@@ -1,3 +1,4 @@
+/*
 package com.gabbar.apicloudgateway;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,4 +23,4 @@ import org.springframework.web.bind.annotation.RestController;
             return "Product Service is down!";
         }
 
-    }
+    }*/

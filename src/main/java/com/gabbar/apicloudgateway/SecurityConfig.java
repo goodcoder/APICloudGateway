@@ -1,3 +1,4 @@
+/*
 package com.gabbar.apicloudgateway;
 
 import org.springframework.context.annotation.Bean;
@@ -24,4 +25,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-}
+}*/

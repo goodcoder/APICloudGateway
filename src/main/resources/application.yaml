@@ -1,45 +1,92 @@
 server:
   port: 9090
-
 spring:
   application:
-    name: apiCloudGateway
-#  cloud:
-#    gateway:
-#      mvc:
-#        routes:
-#          - id: service_a_route
-#            uri: http://localhost:8080
-#            predicates:
-#              - Path=/api/svca/**
-#            filters:
-#              - RewritePath=/api/svca/(?<segment>.*), /${segment}
-#              - TokenRelay=
-#          - id: service_b_route
-#            uri: http://localhost:8081
-#            predicates:
-#              - Path=/api/svcb/**
-#            filters:
-#              - RewritePath=/api/svcb/(?<segment>.*), /${segment}
-#              - TokenRelay=
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://dev-90671757.okta.com/oauth2/default
-      client:
-        registration:
-          okta:
-            client-id: 0oalcifj1yGpQQKHM5d7                #OKTA User aryashekhar@gmail.com
-            client-secret: RhnxLwgiwnCK9Tek3xnv9HtrAs1L39mN1uoQqOa622RvDukqFBFlqu_xHLZc4Fqh
-            redirect-uri: http://localhost:9090/login/oauth2/code/okta  # Not mandatory if default is used
-            scope: openid, profile, email
-        provider:
-          okta:
-            issuer-uri: https://dev-90671757.okta.com/oauth2/default
+    name: API-CLOUD-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id : service_a_route
+          uri:  http://localhost:8080
+          predicates:
+            - Path=/api/svca/**
+          filters:
+            - TokenRelay
+            - name: CircuitBreaker
+              args:
+                name: service_a_route
+                fallbackuri: forward:/serviceAFallBack
+        - id: service_b_route
+          uri:  http://localhost:8081
+          predicates:
+            - Path=/api/svcb/**
+          filters:
+            - TokenRelay
+            - name: CircuitBreaker
+              args:
+                name: service_b_route
+                fallbackuri: forward:/serviceBFallBack
 
 
 okta:
   oauth2:
     issuer: https://dev-90671757.okta.com/oauth2/default
-    audience: api://default
+    audience: api://default  # Not mandatory here, as default is used by Spring . But its good to add audience in each service to add one more check that JWT belong to this service.
+    client-id: 0oalcifj1yGpQQKHM5d7
+    client-secret: RhnxLwgiwnCK9Tek3xnv9HtrAs1L39mN1uoQqOa622RvDukqFBFlqu_xHLZc4Fqh
+    scopes: openid, email, profile, offline_access
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+
+
+
+
+
+#server:
+#  port: 9090
+#
+#spring:
+#  application:
+#    name: apiCloudGateway
+##  cloud:
+##    gateway:
+##      mvc:
+##        routes:
+##          - id: service_a_route
+##            uri: http://localhost:8080
+##            predicates:
+##              - Path=/api/svca/**
+##            filters:
+##              - RewritePath=/api/svca/(?<segment>.*), /${segment}
+##              - TokenRelay=
+##          - id: service_b_route
+##            uri: http://localhost:8081
+##            predicates:
+##              - Path=/api/svcb/**
+##            filters:
+##              - RewritePath=/api/svcb/(?<segment>.*), /${segment}
+##              - TokenRelay=
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://dev-90671757.okta.com/oauth2/default
+#      client:
+#        registration:
+#          okta:
+#            client-id: 0oalcifj1yGpQQKHM5d7                #OKTA User aryashekhar@gmail.com
+#            client-secret: RhnxLwgiwnCK9Tek3xnv9HtrAs1L39mN1uoQqOa622RvDukqFBFlqu_xHLZc4Fqh
+#            redirect-uri: http://localhost:9090/login/oauth2/code/okta  # Not mandatory if default is used
+#            scope: openid, profile, email
+#        provider:
+#          okta:
+#            issuer-uri: https://dev-90671757.okta.com/oauth2/default
+#
+#
+#okta:
+#  oauth2:
+#    issuer: https://dev-90671757.okta.com/oauth2/default
+#    audience: api://default
